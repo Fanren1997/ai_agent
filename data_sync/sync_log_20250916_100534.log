@@ -1,0 +1,3 @@
+2025-09-16 10:05:34,693 - AccessMySQLSync - WARNING - 配置文件 C:\Users\670340750\Downloads\ai agent\system\data_sync\sync_config.json 不存在，将创建默认配置
+2025-09-16 10:05:34,695 - AccessMySQLSync - INFO - 已创建默认配置文件: C:\Users\670340750\Downloads\ai agent\system\data_sync\sync_config.json
+2025-09-16 10:05:34,695 - AccessMySQLSync - INFO - 请修改配置文件中的数据库连接信息后重新运行

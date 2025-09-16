@@ -1,0 +1,3 @@
+2025-09-16 10:05:35,542 - AccessMySQLSync - INFO - 开始运行Access到MySQL数据同步
+2025-09-16 10:05:35,569 - AccessMySQLSync - INFO - 配置文件加载成功
+2025-09-16 10:05:35,570 - AccessMySQLSync - ERROR - Access数据库文件不存在: path/to/your/database.accdb

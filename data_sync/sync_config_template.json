@@ -1,0 +1,63 @@
+{
+    "access_db_path": "C:\Users\670340750\OneDrive - Signify\桌面\git\ai agent2\test.accdb",
+    "mysql_config": {
+        "host": "localhost",
+        "user": "access_user",
+        "password": "wvqbIcZwf5/qgm8V",
+        "database": "access_migration_db",
+        "charset": "utf8mb4",
+        "port": 3306
+    },
+    "sync_tables": [
+        {
+            "access_table": "10NC_based",
+            "mysql_table": "10nc_based",
+            "primary_key": "Project_code",
+            "sync_mode": "full",
+            "description": "主要产品数据表"
+        },
+        {
+            "access_table": "12NC_based2",
+            "mysql_table": "12nc_based2",
+            "primary_key": "id",
+            "sync_mode": "full",
+            "description": "12NC产品数据表"
+        },
+        {
+            "access_table": "12NCspec_based2",
+            "mysql_table": "12ncspec_based2",
+            "primary_key": "id",
+            "sync_mode": "full",
+            "description": "12NC规格数据表"
+        },
+        {
+            "access_table": "12NCspec_based3",
+            "mysql_table": "12ncspec_based3",
+            "primary_key": "id",
+            "sync_mode": "full",
+            "description": "12NC规格数据表3"
+        }
+    ],
+    "sync_options": {
+        "batch_size": 1000,
+        "backup_before_sync": true,
+        "verify_data": true,
+        "log_level": "INFO",
+        "max_retries": 3,
+        "retry_delay": 5,
+        "connection_timeout": 30
+    },
+    "field_mappings": {
+        "datetime_format": "%Y-%m-%d %H:%M:%S",
+        "null_values": ["", "NULL", "null", "None"],
+        "boolean_true": ["True", "true", "1", "Yes", "yes"],
+        "boolean_false": ["False", "false", "0", "No", "no"]
+    },
+    "filters": {
+        "exclude_system_tables": true,
+        "include_empty_tables": false,
+        "table_name_pattern": ".*",
+        "exclude_columns": ["temp_", "backup_"]
+    }
+}
+
