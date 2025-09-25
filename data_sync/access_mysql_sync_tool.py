@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-"""
-Access到MySQL数据同步工具
-用于在Windows环境下将Microsoft Access数据库(.accdb)同步到MySQL数据库
 
-作者: Manus AI
-版本: 1.0
-支持的Python版本: 3.8+
-"""
 
 import os
 import sys
@@ -106,7 +99,7 @@ class AccessMySQLSyncTool:
     def _create_default_config(self):
         """创建默认配置文件"""
         default_config = {
-            "access_db_path": "path/to/your/database.accdb",
+            "access_db_path": "C:\Users\670340750\Downloads\ai agent\test.accdb",
             "mysql_config": {
                 "host": "localhost",
                 "user": "access_user",
