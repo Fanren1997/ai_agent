@@ -1,5 +1,5 @@
 {
-    "access_db_path": "C:\Users\670340750\OneDrive - Signify\桌面\git\ai agent2\test.accdb",
+    "access_db_path": "C:\\Users\\670340750\\OneDrive - Signify\\桌面\\git\\ai agent2\\test.accdb",
     "mysql_config": {
         "host": "localhost",
         "user": "access_user",
