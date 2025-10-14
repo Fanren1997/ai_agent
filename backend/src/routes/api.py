@@ -1,298 +1,100 @@
-from flask import Blueprint, request, jsonify, send_file
-from src.database import db_manager
-from src.services.ai_service import AIService
-from src.services.export_service import ExportService
+# backend/src/routes/api.py
+from flask import Blueprint, jsonify, request
+from src.database import db_manager, check_db_connection
+from src.services.ai_service import chat_with_ai
 import json
-import os
-import tempfile
 
-api_bp = Blueprint('api', __name__)
-ai_service = AIService()
-export_service = ExportService()
+api_bp = Blueprint("api", __name__, url_prefix="/api")
 
-@api_bp.route('/tables', methods=['GET'])
-def get_tables():
-    """获取所有表列表"""
-    try:
-        tables = db_manager.get_tables()
-        # 过滤掉系统表和空表名
-        filtered_tables = [t for t in tables if t and not t.startswith('__')]
-        
-        table_info = []
-        for table in filtered_tables:
-            count = db_manager.get_table_count(table)
-            table_info.append({
-                'name': table,
-                'count': count
-            })
-        
-        return jsonify({
-            'success': True,
-            'data': table_info
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
 
-@api_bp.route('/tables/<table_name>/columns', methods=['GET'])
-def get_table_columns(table_name):
-    """获取表结构"""
-    try:
-        columns = db_manager.get_table_columns(table_name)
-        return jsonify({
-            'success': True,
-            'data': columns
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@api_bp.route('/query', methods=['POST'])
-def execute_query():
-    """执行SQL查询"""
-    try:
-        data = request.get_json()
-        query = data.get('query', '').strip()
-        page = data.get('page', 1)
-        page_size = data.get('page_size', 50)
-        
-        if not query:
-            return jsonify({
-                'success': False,
-                'error': '查询语句不能为空'
-            }), 400
-        
-        # 安全检查：只允许SELECT查询
-        if not query.upper().strip().startswith('SELECT'):
-            return jsonify({
-                'success': False,
-                'error': '只允许SELECT查询'
-            }), 400
-        
-        # 添加分页
-        offset = (page - 1) * page_size
-        paginated_query = f"{query} LIMIT {page_size} OFFSET {offset}"
-        
-        # 执行查询
-        result = db_manager.execute_query(paginated_query)
-        
-        # 获取总记录数（用于分页）
-        count_query = f"SELECT COUNT(*) as total FROM ({query}) as count_table"
-        count_result = db_manager.execute_query(count_query)
-        total = count_result[0]['total'] if count_result else 0
-        
-        return jsonify({
-            'success': True,
-            'data': {
-                'rows': result or [],
-                'total': total,
-                'page': page,
-                'page_size': page_size,
-                'total_pages': (total + page_size - 1) // page_size
-            }
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@api_bp.route('/nl_query', methods=['POST'])
-def natural_language_query():
-    """自然语言查询"""
-    try:
-        data = request.get_json()
-        question = data.get('question', '').strip()
-        
-        if not question:
-            return jsonify({
-                'success': False,
-                'error': '问题不能为空'
-            }), 400
-        
-        # 使用AI服务将自然语言转换为SQL
-        sql_query = ai_service.nl_to_sql(question)
-        
-        if not sql_query:
-            return jsonify({
-                'success': False,
-                'error': 'AI服务暂时不可用'
-            }), 500
-        
-        # 执行生成的SQL查询
-        result = db_manager.execute_query(sql_query)
-        
-        return jsonify({
-            'success': True,
-            'data': {
-                'sql': sql_query,
-                'rows': result or [],
-                'question': question
-            }
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@api_bp.route('/analyze', methods=['POST'])
-def analyze_data():
-    """数据分析"""
-    try:
-        data = request.get_json()
-        query = data.get('query', '').strip()
-        analysis_type = data.get('analysis_type', 'summary')
-        
-        if not query:
-            return jsonify({
-                'success': False,
-                'error': '查询语句不能为空'
-            }), 400
-        
-        # 执行查询获取数据
-        result = db_manager.execute_query(query)
-        
-        if not result:
-            return jsonify({
-                'success': False,
-                'error': '查询没有返回数据'
-            }), 400
-        
-        # 使用AI服务分析数据
-        analysis = ai_service.analyze_data(result, analysis_type)
-        
-        return jsonify({
-            'success': True,
-            'data': {
-                'analysis': analysis,
-                'row_count': len(result)
-            }
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@api_bp.route('/chat', methods=['POST'])
-def chat():
-    """智能对话"""
-    try:
-        data = request.get_json()
-        message = data.get('message', '').strip()
-        context = data.get('context', [])
-        
-        if not message:
-            return jsonify({
-                'success': False,
-                'error': '消息不能为空'
-            }), 400
-        
-        # 使用AI服务处理对话
-        response = ai_service.chat(message, context)
-        
-        return jsonify({
-            'success': True,
-            'data': {
-                'response': response,
-                'message': message
-            }
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@api_bp.route('/export/csv', methods=['POST'])
-def export_csv():
-    """导出CSV"""
-    try:
-        data = request.get_json()
-        query = data.get('query', '').strip()
-        filename = data.get('filename', 'export.csv')
-        
-        if not query:
-            return jsonify({
-                'success': False,
-                'error': '查询语句不能为空'
-            }), 400
-        
-        # 执行查询
-        result = db_manager.execute_query(query)
-        
-        if not result:
-            return jsonify({
-                'success': False,
-                'error': '查询没有返回数据'
-            }), 400
-        
-        # 生成CSV文件
-        file_path = export_service.export_to_csv(result, filename)
-        
-        return send_file(file_path, as_attachment=True, download_name=filename)
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@api_bp.route('/export/excel', methods=['POST'])
-def export_excel():
-    """导出Excel"""
-    try:
-        data = request.get_json()
-        query = data.get('query', '').strip()
-        filename = data.get('filename', 'export.xlsx')
-        
-        if not query:
-            return jsonify({
-                'success': False,
-                'error': '查询语句不能为空'
-            }), 400
-        
-        # 执行查询
-        result = db_manager.execute_query(query)
-        
-        if not result:
-            return jsonify({
-                'success': False,
-                'error': '查询没有返回数据'
-            }), 400
-        
-        # 生成Excel文件
-        file_path = export_service.export_to_excel(result, filename)
-        
-        return send_file(file_path, as_attachment=True, download_name=filename)
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@api_bp.route('/health', methods=['GET'])
+@api_bp.route("/health", methods=["GET"])
 def health_check():
-    """健康检查"""
+    """系统健康检查"""
     try:
-        # 检查数据库连接
+        db_ok = check_db_connection()
         tables = db_manager.get_tables()
-        
-        return jsonify({
-            'success': True,
-            'data': {
-                'status': 'healthy',
-                'database': 'connected',
-                'tables_count': len(tables)
-            }
-        })
+        status = {
+            "db": "ok" if db_ok else "failed",
+            "tables": tables,
+            "llm_base_url": "https://api.deepseek.com/v1",
+            "model": "deepseek-chat"
+        }
+        return jsonify({"ok": db_ok, "details": status})
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({"ok": False, "details": {"db": f"error: {e}"}}), 500
 
+
+@api_bp.route("/chat", methods=["POST"])
+def chat():
+    """
+    智能问答接口：
+    1. 根据自然语言生成 SQL
+    2. 执行 SQL
+    3. AI 总结结果
+    """
+    try:
+        data = request.get_json(force=True)
+        messages = data.get("messages", [])
+        if not messages:
+            return jsonify({"error": "Empty messages"}), 400
+
+        user_msg = messages[-1]["content"].strip()
+
+        # 1️⃣ 获取数据库表结构信息（让 AI 能理解你的表）
+        tables = db_manager.get_tables()
+        schema_hint = "当前数据库包含以下表：" + ", ".join(tables)
+
+        # （可选）进一步获取字段名
+        table_columns = {}
+        try:
+            for table in tables:
+                columns = db_manager.execute_query(f"SHOW COLUMNS FROM {table}")
+                table_columns[table] = [c["Field"] for c in columns]
+        except Exception:
+            pass
+
+        schema_context = json.dumps(table_columns, ensure_ascii=False)
+
+        # 2️⃣ 让 AI 生成 SQL
+        prompt_sql = [
+            {
+                "role": "system",
+                "content": (
+                    "你是一个 MySQL 专家，根据用户问题生成正确的 SQL 查询语句。"
+                    "请使用现有表结构，不要虚构表名或字段名。"
+                    "仅输出 SQL，不解释。"
+                )
+            },
+            {
+                "role": "user",
+                "content": f"{schema_hint}\n字段信息如下：{schema_context}\n\n用户问题：{user_msg}"
+            },
+        ]
+
+        sql_text = chat_with_ai(prompt_sql)
+        print(f"🧠 AI 生成的 SQL:\n{sql_text}")
+
+        # 3️⃣ 执行 SQL 查询
+        try:
+            result = db_manager.execute_query(sql_text)
+        except Exception as e:
+            return jsonify({
+                "error": f"SQL执行错误: {e}",
+                "sql": sql_text
+            }), 500
+
+        # 4️⃣ AI 总结结果
+        prompt_summary = [
+            {"role": "system", "content": "你是一个数据分析助手，请用简洁中文总结SQL结果。"},
+            {"role": "user", "content": f"SQL:\n{sql_text}\n\n结果:\n{json.dumps(result, ensure_ascii=False, indent=2)}"}
+        ]
+        summary = chat_with_ai(prompt_summary)
+
+        return jsonify({
+            "sql": sql_text,
+            "result": result,
+            "summary": summary
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

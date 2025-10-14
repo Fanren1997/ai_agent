@@ -1,86 +1,78 @@
+# backend/src/database.py
 import mysql.connector
 from mysql.connector import Error
-from src.config import Config
+from dotenv import load_dotenv
+import os
+from pathlib import Path
+
+# 加载 .env
+env_path = Path(__file__).resolve().parents[2] / ".env"
+load_dotenv(env_path)
+
 
 class DatabaseManager:
     def __init__(self):
         self.config = {
-            'host': Config.MYSQL_HOST,
-            'user': Config.MYSQL_USER,
-            'password': Config.MYSQL_PASSWORD,
-            'database': Config.MYSQL_DATABASE,
-            'charset': 'utf8mb4'
+            "host": os.getenv("MYSQL_HOST", "127.0.0.1"),
+            "user": os.getenv("MYSQL_USER", "root"),
+            "password": os.getenv("MYSQL_PASSWORD", ""),
+            "database": os.getenv("MYSQL_DATABASE", ""),
         }
-    
+
     def get_connection(self):
-        """获取数据库连接"""
+        """获取 MySQL 连接"""
         try:
-            connection = mysql.connector.connect(**self.config)
-            return connection
+            conn = mysql.connector.connect(**self.config)
+            if conn.is_connected():
+                return conn
         except Error as e:
-            print(f"数据库连接错误: {e}")
-            return None
-    
+            print(f"❌ 数据库连接错误: {e}")
+        return None
+
     def execute_query(self, query, params=None):
-        """执行查询并返回结果"""
-        connection = self.get_connection()
-        if not connection:
-            return None
-        
+        """执行 SQL 查询"""
+        conn = self.get_connection()
+        if conn is None:
+            raise Exception("无法连接数据库")
+        cursor = conn.cursor(dictionary=True)
         try:
-            cursor = connection.cursor(dictionary=True)
             cursor.execute(query, params or ())
             result = cursor.fetchall()
             return result
         except Error as e:
-            print(f"查询执行错误: {e}")
-            return None
+            raise Exception(f"SQL 执行错误: {e}")
         finally:
-            if connection.is_connected():
-                cursor.close()
-                connection.close()
-    
-    def execute_update(self, query, params=None):
-        """执行更新操作"""
-        connection = self.get_connection()
-        if not connection:
-            return False
-        
-        try:
-            cursor = connection.cursor()
-            cursor.execute(query, params or ())
-            connection.commit()
-            return True
-        except Error as e:
-            print(f"更新执行错误: {e}")
-            connection.rollback()
-            return False
-        finally:
-            if connection.is_connected():
-                cursor.close()
-                connection.close()
-    
+            cursor.close()
+            conn.close()
+
     def get_tables(self):
         """获取所有表名"""
-        query = "SHOW TABLES"
-        result = self.execute_query(query)
-        if result:
-            return [list(row.values())[0] for row in result]
-        return []
-    
-    def get_table_columns(self, table_name):
-        """获取表的列信息"""
-        query = f"SHOW COLUMNS FROM `{table_name}`"
-        return self.execute_query(query)
-    
-    def get_table_count(self, table_name):
-        """获取表的记录数"""
-        query = f"SELECT COUNT(*) as count FROM `{table_name}`"
-        result = self.execute_query(query)
-        if result:
-            return result[0]['count']
-        return 0
+        conn = self.get_connection()
+        if conn is None:
+            return []
+        cursor = conn.cursor()
+        cursor.execute("SHOW TABLES")
+        tables = [row[0] for row in cursor.fetchall()]
+        cursor.close()
+        conn.close()
+        return tables
 
-# 全局数据库管理器实例
+
+# 全局实例
 db_manager = DatabaseManager()
 
+
+def check_db_connection():
+    """健康检查：测试 MySQL 是否可连接"""
+    try:
+        conn = db_manager.get_connection()
+        if conn:
+            conn.close()
+            print("✅ 数据库连接测试通过")
+            return True
+        else:
+            print("❌ 无法连接到数据库")
+            return False
+    except Exception as e:
+        print(f"❌ 数据库健康检查失败: {e}")
+        return False
