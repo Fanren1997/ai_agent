@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ChatInterface from "./components/ChatInterface";
+import ChatPage from "./components/ChatPage";
 import api from "./api";
 
 export default function App() {
@@ -17,11 +17,13 @@ export default function App() {
           <span className="dropdown">▼</span>
         </div>
         <div className="right">
-          已连接 <b>Access Agent</b> ・ 模型 <b>{health?.details?.model || "deepseek-chat"}</b>
+          已连接 <b>Access Agent</b> • 模型{" "}
+          <b>{health?.details?.model || "deepseek-chat"}</b>
         </div>
       </header>
+
       <main className="main">
-        <ChatInterface />
+        <ChatPage />
       </main>
     </div>
   );

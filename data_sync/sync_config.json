@@ -3,7 +3,7 @@
     "mysql_config": {
         "host": "localhost",
         "user": "access_user",
-        "password": "your_password",
+        "password": "wvqbIcZwf5/qgm8V",
         "database": "access_migration_db",
         "charset": "utf8mb4"
     },
@@ -12,7 +12,19 @@
             "access_table": "10NC_based",
             "mysql_table": "10nc_based",
             "primary_key": "id",
-            "sync_mode": "full"
+            "sync_mode": "incremental"
+        },
+        {
+            "access_table": "Lifetime",
+            "mysql_table": "lifetime_data",
+            "primary_key": "Sample_ID",
+            "sync_mode": "incremental"
+        },
+        {
+            "access_table": "TestResult",
+            "mysql_table": "test_result",
+            "primary_key": "Record_ID",
+            "sync_mode": "incremental"
         }
     ],
     "sync_options": {

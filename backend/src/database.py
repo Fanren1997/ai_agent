@@ -1,78 +1,62 @@
-# backend/src/database.py
-import mysql.connector
-from mysql.connector import Error
-from dotenv import load_dotenv
-import os
-from pathlib import Path
+# -*- coding: utf-8 -*-
+"""
+数据库服务模块 · Access Agent
+用于 MySQL 连接、SQL 执行与结果返回
+支持自动重连与中文日志输出
+"""
 
-# 加载 .env
-env_path = Path(__file__).resolve().parents[2] / ".env"
-load_dotenv(env_path)
+import pymysql
+import pandas as pd
+# ✅ 最正确写法（直接从同级文件引入）
+from config import MYSQL_CONFIG
 
 
-class DatabaseManager:
-    def __init__(self):
-        self.config = {
-            "host": os.getenv("MYSQL_HOST", "127.0.0.1"),
-            "user": os.getenv("MYSQL_USER", "root"),
-            "password": os.getenv("MYSQL_PASSWORD", ""),
-            "database": os.getenv("MYSQL_DATABASE", ""),
-        }
 
-    def get_connection(self):
-        """获取 MySQL 连接"""
-        try:
-            conn = mysql.connector.connect(**self.config)
-            if conn.is_connected():
-                return conn
-        except Error as e:
-            print(f"❌ 数据库连接错误: {e}")
+def get_connection():
+    """
+    获取 MySQL 连接对象
+    """
+    try:
+        conn = pymysql.connect(
+            host=MYSQL_CONFIG["host"],
+            user=MYSQL_CONFIG["user"],
+            password=MYSQL_CONFIG["password"],
+            database=MYSQL_CONFIG["database"],
+            port=int(MYSQL_CONFIG.get("port", 3306)),
+            charset=MYSQL_CONFIG.get("charset", "utf8mb4"),
+            autocommit=True
+        )
+        return conn
+    except Exception as e:
+        print(f"❌ 数据库连接失败: {e}")
         return None
 
-    def execute_query(self, query, params=None):
-        """执行 SQL 查询"""
-        conn = self.get_connection()
-        if conn is None:
-            raise Exception("无法连接数据库")
-        cursor = conn.cursor(dictionary=True)
-        try:
-            cursor.execute(query, params or ())
-            result = cursor.fetchall()
-            return result
-        except Error as e:
-            raise Exception(f"SQL 执行错误: {e}")
-        finally:
-            cursor.close()
-            conn.close()
 
-    def get_tables(self):
-        """获取所有表名"""
-        conn = self.get_connection()
-        if conn is None:
-            return []
-        cursor = conn.cursor()
-        cursor.execute("SHOW TABLES")
-        tables = [row[0] for row in cursor.fetchall()]
-        cursor.close()
-        conn.close()
-        return tables
+def execute_sql(sql: str):
+    """
+    执行 SQL 并返回 JSON 结果（列表 + 字典格式）
+    """
+    conn = get_connection()
+    if not conn:
+        return {"error": "无法连接数据库"}
 
-
-# 全局实例
-db_manager = DatabaseManager()
-
-
-def check_db_connection():
-    """健康检查：测试 MySQL 是否可连接"""
     try:
-        conn = db_manager.get_connection()
-        if conn:
-            conn.close()
-            print("✅ 数据库连接测试通过")
-            return True
-        else:
-            print("❌ 无法连接到数据库")
-            return False
+        print(f"✅ 已连接数据库: {MYSQL_CONFIG['database']} at {MYSQL_CONFIG['host']}")
+        print(f"🧠 执行 SQL: {sql}")
+
+        df = pd.read_sql(sql, conn)
+
+        # 转换为列表形式输出
+        result = df.to_dict(orient="records")
+        if not result:
+            return {"message": "查询无结果", "result": []}
+
+        print(f"📊 返回 {len(result)} 条记录")
+        return result
+
     except Exception as e:
-        print(f"❌ 数据库健康检查失败: {e}")
-        return False
+        print(f"⚠️ SQL 执行错误: {e}")
+        return {"error": f"SQL执行错误: {e}"}
+
+    finally:
+        conn.close()
