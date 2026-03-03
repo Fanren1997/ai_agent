@@ -1,0 +1,22 @@
+# Dependency directories
+node_modules/
+frontend/node_modules/
+
+# Python virtual env
+.venv/
+
+# Python bytecode/cache
+__pycache__/
+*.pyc
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+*.laccdb
+*.accdb
+data_sync/*.csv
+
+# IDE/system noise
+.DS_Store
+Thumbs.db

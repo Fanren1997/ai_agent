@@ -1,0 +1,11 @@
+{
+  "access_db_path": "C:\\Users\\670340750\\Downloads\\ai agent\\system\\Tulip Database.accdb",
+  "access_password": "",
+  "mysql_config": {
+    "host": "127.0.0.1",
+    "user": "access_user",
+    "password": "",
+    "database": "access_migration_db"
+  },
+  "workers": 4
+}

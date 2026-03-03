@@ -1,0 +1,78 @@
+.github/
+  appmod-java/
+    appcat/
+      .gitignore
+      assessment-config.yaml
+backend/
+  src/
+    __pycache__/
+      __init__.cpython-313.pyc
+      ai_prompts.cpython-313.pyc
+      config.cpython-313.pyc
+      database.cpython-313.pyc
+      main.cpython-313.pyc
+    maintenance/
+    routes/
+      __pycache__/
+      __init__.py
+      api.py
+      schema_api.py
+    services/
+      __pycache__/
+      __init__.py
+      ai_service.py
+      chat_store.py
+      export_store.py
+      sync_service.py
+    __init__.py
+    ai_prompts.py
+    config.py
+    database.py
+    main.py
+    schema_dump.json
+  static/
+    schema_manager.html
+    schema_prompts_bilingual.json
+  uploads/
+  venv/
+    Include/
+    Lib/
+      site-packages/
+    Scripts/
+      activate
+      activate.bat
+      activate.fish
+      Activate.ps1
+      deactivate.bat
+      pip.exe
+      pip3.13.exe
+      pip3.exe
+      python.exe
+      pythonw.exe
+    .gitignore
+    pyvenv.cfg
+  requirements.txt
+data_sync/
+  __pycache__/
+    access_mysql_sync_tool.cpython-313.pyc
+  tmp_csv/
+  access_mysql_sync_tool.py
+  sync_config.json
+frontend/
+  src/
+    components/
+      ChatInterface.jsx
+    api.js
+    App.jsx
+    index.css
+    main.jsx
+    style.css
+  index.html
+  package-lock.json
+  package.json
+  vite.config.js
+.env
+.gitignore
+mysql_user_password.txt
+Tulip Database.accdb
+Tulip Database.laccdb

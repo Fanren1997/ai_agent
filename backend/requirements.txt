@@ -1,0 +1,22 @@
+# Web Framework
+flask
+flask-cors
+
+# Environment variable loader
+python-dotenv
+
+# Database
+pymysql
+sqlalchemy
+pandas
+cryptography
+
+# Access → MySQL 同步
+pyodbc
+
+# Misc utils
+requests
+
+# Optional: 如果未来你会用 deepseek/openai 接口，可以保留下面两条
+# openai
+# httpx

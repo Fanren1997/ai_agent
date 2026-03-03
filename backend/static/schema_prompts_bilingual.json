@@ -1,0 +1,402 @@
+{
+  "10NC": {
+    "en": "10nc",
+    "zh": "10NC"
+  },
+  "12nc": {
+    "alias": [
+      "code"
+    ],
+    "en": "12nc）",
+    "zh": "12NC"
+  },
+  "BCP_Gross_weight": {
+    "alias": [
+      "毛重",
+      "weight"
+    ],
+    "en": "Bcp gross weight",
+    "zh": "BCP Gross weight"
+  },
+  "BCP_Height": {
+    "alias": [
+      "高度",
+      "height"
+    ],
+    "en": "Bcp height",
+    "zh": "BCP Height"
+  },
+  "BCP_Length": {
+    "alias": [
+      "length",
+      "长度"
+    ],
+    "en": "Bcp length",
+    "zh": "BCP Length"
+  },
+  "BCP_Net_weight": {
+    "alias": [
+      "净重",
+      "weight"
+    ],
+    "en": "Bcp net weight",
+    "zh": "BCP Net weight"
+  },
+  "BCP_Width": {
+    "alias": [
+      "width",
+      "宽度"
+    ],
+    "en": "Bcp width",
+    "zh": "BCP Width"
+  },
+  "Brand": {
+    "en": "Brand",
+    "zh": "品牌"
+  },
+  "CAG_name": {
+    "alias": [
+      "cag"
+    ],
+    "en": "Cag name",
+    "zh": "CAG 名称"
+  },
+  "Change_Comment": {
+    "en": "Change comment ",
+    "zh": "Change Comment"
+  },
+  "Change_Date": {
+    "en": "Change date ",
+    "zh": "Change 日期"
+  },
+  "Change_Type": {
+    "en": "Change type ",
+    "zh": "Change Type"
+  },
+  "Channel": {
+    "en": "Channel",
+    "zh": "Channel"
+  },
+  "Comments": {
+    "en": "Comments ",
+    "zh": "Comments"
+  },
+  "Commercial_release_date": {
+    "alias": [
+      "release",
+      "release date"
+    ],
+    "en": "Commercial release date",
+    "zh": "Commercial release 日期"
+  },
+  "Country_of_origin": {
+    "en": "Country of origin",
+    "zh": "原产国"
+  },
+  "DM_remark": {
+    "en": "Dm remark",
+    "zh": "DM remark"
+  },
+  "Europe": {
+    "alias": [
+      "eu",
+      "EU"
+    ],
+    "en": "Europe",
+    "zh": "欧洲"
+  },
+  "Great_China": {
+    "alias": [
+      "GC"
+    ],
+    "en": "Great china",
+    "zh": "大中华区"
+  },
+  "Growth_Market": {
+    "en": "growth market",
+    "zh": "Growth Market"
+  },
+  "Hierarchy": {
+    "alias": [
+      "hierarchy"
+    ],
+    "en": "Hierarchy",
+    "zh": "Hierarchy"
+  },
+  "L01_Gross_weight": {
+    "en": "L01 gross weight",
+    "zh": "L Gross weight"
+  },
+  "L01_Net_weight": {
+    "en": "L01 net weight",
+    "zh": "L Net weight"
+  },
+  "L01_Qty": {
+    "en": "L01 qty",
+    "zh": "L Qty"
+  },
+  "L02_Gross_weight": {
+    "en": "L02 gross weight",
+    "zh": "L Gross weight"
+  },
+  "L02_Net_weight": {
+    "en": "L02 net weight",
+    "zh": "L Net weight"
+  },
+  "L02_Qty": {
+    "en": "L02 qty",
+    "zh": "L Qty"
+  },
+  "L04_Gross_weight": {
+    "en": "L04 gross weight",
+    "zh": "L Gross weight"
+  },
+  "L04_Net_weight": {
+    "en": "L04 net weight",
+    "zh": "L Net weight"
+  },
+  "L04_Qty": {
+    "en": "L04 qty",
+    "zh": "L Qty"
+  },
+  "Latam": {
+    "en": "Latam",
+    "zh": "拉美"
+  },
+  "Lifetime_in_years": {
+    "alias": [
+      "lifetime",
+      "寿命"
+    ],
+    "en": "Lifetime in years ",
+    "zh": "Lifetime in years"
+  },
+  "MCM_Status": {
+    "en": "Mcm status ",
+    "zh": "MCM 状态"
+  },
+  "Major_Change": {
+    "en": "Major change ",
+    "zh": "Major Change"
+  },
+  "Material_description": {
+    "alias": [
+      "description"
+    ],
+    "en": "Material description",
+    "zh": "材料描述"
+  },
+  "Model_ID": {
+    "en": "Model id ",
+    "zh": "Model 编号"
+  },
+  "Model_description": {
+    "en": "Model description ",
+    "zh": "Model 描述"
+  },
+  "NAM": {
+    "alias": [
+      "north America"
+    ],
+    "en": "Nam",
+    "zh": "北美"
+  },
+  "NLOcountry": {
+    "en": "Nlocountry",
+    "zh": "国家"
+  },
+  "P01_Gross_weight": {
+    "en": "P01 gross weight ",
+    "zh": "P Gross weight"
+  },
+  "P01_Height": {
+    "en": "P01 height",
+    "zh": "P Height"
+  },
+  "P01_Length": {
+    "en": "P01 length",
+    "zh": "P Length"
+  },
+  "P01_Packaging_Readiness_data_check": {
+    "en": "P01 packaging readiness data check",
+    "zh": "P Packaging Readiness data check"
+  },
+  "P01_Packing_type": {
+    "en": "P01 packing type",
+    "zh": "P Packing type"
+  },
+  "P01_Qty": {
+    "en": "P01 qty",
+    "zh": "P Qty"
+  },
+  "P01_Unit_of_Dimension": {
+    "en": "P01 unit of dimension",
+    "zh": "P 单位 of Dimension"
+  },
+  "P01_Weight_Unit": {
+    "en": "P01 weight unit",
+    "zh": "P Weight 单位"
+  },
+  "P01_Width": {
+    "en": "P01 width",
+    "zh": "P Width"
+  },
+  "P02_Gross_weight": {
+    "en": "P02 gross weight",
+    "zh": "P Gross weight"
+  },
+  "P02_Height": {
+    "en": "P02 height",
+    "zh": "P Height"
+  },
+  "P02_Length": {
+    "en": "P02 length",
+    "zh": "P Length"
+  },
+  "P02_Packaging_Readiness_data_check": {
+    "en": "P02 packaging readiness data check",
+    "zh": "P Packaging Readiness data check"
+  },
+  "P02_Packing_type": {
+    "en": "P02 packing type",
+    "zh": "P Packing type"
+  },
+  "P02_Qty": {
+    "en": "P02 qty",
+    "zh": "P Qty"
+  },
+  "P02_Unit_of_Dimension": {
+    "en": "P02 unit of dimension",
+    "zh": "P 单位 of Dimension"
+  },
+  "P02_Weight_Unit": {
+    "en": "P02 weight unit",
+    "zh": "P Weight 单位"
+  },
+  "P02_Width": {
+    "en": "P02 width",
+    "zh": "P Width"
+  },
+  "P04_Gross_weight": {
+    "en": "P04 gross weight",
+    "zh": "P Gross weight"
+  },
+  "P04_Height": {
+    "en": "P04 height",
+    "zh": "P Height"
+  },
+  "P04_Length": {
+    "en": "P04 length",
+    "zh": "P Length"
+  },
+  "P04_Packaging_Readiness_data_check": {
+    "en": "P04 packaging readiness data check",
+    "zh": "P Packaging Readiness data check"
+  },
+  "P04_Packing_type": {
+    "en": "P04 packing type",
+    "zh": "P Packing type"
+  },
+  "P04_Qty": {
+    "en": "P04 qty",
+    "zh": "P Qty"
+  },
+  "P04_Unit_of_Dimension": {
+    "en": "P04 unit of dimensio",
+    "zh": "P 单位 of Dimension"
+  },
+  "P04_Weight_Unit": {
+    "en": "P04 weight unit",
+    "zh": "P Weight 单位"
+  },
+  "P04_Width": {
+    "en": "P04 width",
+    "zh": "P Width"
+  },
+  "PMPC_model": {
+    "en": "Pmpc model ",
+    "zh": "PMPC model"
+  },
+  "PM_Comments": {
+    "en": "Pm comments",
+    "zh": "PM Comments"
+  },
+  "PM_name": {
+    "alias": [
+      "pm"
+    ],
+    "en": "Pm name",
+    "zh": "PM 名字"
+  },
+  "Packing_type": {
+    "en": "Packing type",
+    "zh": "Packing type"
+  },
+  "Predecessor_12NC": {
+    "alias": [
+      "上一代12nc"
+    ],
+    "en": "Predecessor 12nc",
+    "zh": "Predecessor 12NC"
+  },
+  "Product_Category": {
+    "alias": [
+      "category"
+    ],
+    "en": "Product category",
+    "zh": "产品类别"
+  },
+  "Product_image": {
+    "alias": [
+      "VLIM",
+      "VLIM number",
+      "Vlim ID"
+    ],
+    "en": "Product image",
+    "zh": "Product image"
+  },
+  "Project_Code": {
+    "en": "Project code",
+    "zh": "项目编码"
+  },
+  "Status": {
+    "en": "Status",
+    "zh": "状态"
+  },
+  "Target_Phase_out_date": {
+    "alias": [
+      "phase out date",
+      "Target date"
+    ],
+    "en": "Target phase out date",
+    "zh": "Target Phase out 日期"
+  },
+  "Username": {
+    "alias": [
+      "user",
+      "username"
+    ],
+    "en": "Username ",
+    "zh": "Username"
+  },
+  "X_plant_Status": {
+    "alias": [
+      "SAP里的状态",
+      "sap的status",
+      "status"
+    ],
+    "en": "X plant status",
+    "zh": "X plant 状态"
+  },
+  "ZI_Remove_Date": {
+    "en": "Zi remove date ",
+    "zh": "ZI Remove 日期"
+  },
+  "assignedregion": {
+    "alias": [
+      "region"
+    ],
+    "en": "Assignedregion ",
+    "zh": "assignedregion"
+  }
+}

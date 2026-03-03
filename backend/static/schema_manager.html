@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schema 管理</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f6f7fb;
+        color: #1f2937;
+      }
+      body {
+        margin: 0;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 24px;
+        background: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      header h1 {
+        font-size: 18px;
+        margin: 0;
+      }
+      header .back-btn {
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        color: #111827;
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.2s ease;
+      }
+      header .back-btn:hover {
+        border-color: #cbd5f5;
+        background: #f5f7ff;
+      }
+      .container {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        height: calc(100vh - 66px);
+      }
+      .sidebar {
+        padding: 16px;
+        border-right: 1px solid #e5e7eb;
+        background: #f9fafb;
+        overflow-y: auto;
+      }
+      .sidebar button {
+        width: 100%;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        background: #fff;
+        text-align: left;
+        cursor: pointer;
+      }
+      .sidebar button.active {
+        border-color: #2563eb;
+        background: #e0e7ff;
+      }
+      .main {
+        padding: 16px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .toolbar-status {
+        margin-left: auto;
+      }
+      .toolbar input {
+        padding: 8px 10px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        min-width: 220px;
+      }
+      .toolbar button {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #2563eb;
+        background: #2563eb;
+        color: #fff;
+        cursor: pointer;
+      }
+      .toolbar button.secondary {
+        background: #fff;
+        color: #2563eb;
+      }
+      .status {
+        font-size: 13px;
+        color: #6b7280;
+      }
+      textarea {
+        flex: 1;
+        width: 100%;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 12px;
+        font-family: "Consolas", "Courier New", monospace;
+        font-size: 13px;
+        resize: none;
+        background: #ffffff;
+      }
+      .hint {
+        font-size: 12px;
+        color: #9ca3af;
+      }
+      .login-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        backdrop-filter: blur(6px);
+      }
+      .login-card {
+        width: min(420px, 90vw);
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
+        display: grid;
+        gap: 14px;
+      }
+      .login-card h2 {
+        margin: 0;
+        font-size: 20px;
+      }
+      .login-card p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+      }
+      .login-card label {
+        font-size: 13px;
+        color: #374151;
+      }
+      .login-card input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+      }
+      .login-card button {
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: none;
+        background: #2563eb;
+        color: #fff;
+        cursor: pointer;
+      }
+      .login-error {
+        color: #dc2626;
+        font-size: 12px;
+        min-height: 16px;
+      }
+      .locked {
+        filter: blur(6px);
+        pointer-events: none;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app-shell" class="locked">
+      <header>
+        <h1>Schema 管理</h1>
+        <button class="back-btn" id="back-btn">返回主页</button>
+      </header>
+      <div class="container">
+        <aside class="sidebar">
+          <div class="hint">数据表</div>
+          <div id="table-list"></div>
+        </aside>
+        <section class="main">
+          <div class="toolbar">
+            <input id="token-input" type="password" placeholder="管理员令牌（X-Admin-Token）" />
+            <button id="refresh-btn" class="secondary">刷新表</button>
+            <button id="load-all-btn" class="secondary">加载全部</button>
+            <button id="save-table-btn">保存表</button>
+            <button id="save-all-btn">保存全部</button>
+            <div class="status toolbar-status" id="status">就绪</div>
+          </div>
+          <div class="hint" id="current-table">未选择表</div>
+          <textarea id="schema-editor" spellcheck="false"></textarea>
+        </section>
+      </div>
+    </div>
+
+    <div class="login-overlay" id="login-overlay">
+      <div class="login-card">
+        <h2>管理员登录</h2>
+        <p>请输入管理员账号与密码。</p>
+        <div>
+          <label for="login-user">账号</label>
+          <input id="login-user" type="text" placeholder="admin" />
+        </div>
+        <div>
+          <label for="login-pass">密码</label>
+          <input id="login-pass" type="password" placeholder="******" />
+        </div>
+        <div class="login-error" id="login-error"></div>
+        <button id="login-btn">登录</button>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = "/api/schema";
+      const tableListEl = document.getElementById("table-list");
+      const editorEl = document.getElementById("schema-editor");
+      const statusEl = document.getElementById("status");
+      const currentTableEl = document.getElementById("current-table");
+      const tokenInput = document.getElementById("token-input");
+      const refreshBtn = document.getElementById("refresh-btn");
+      const loadAllBtn = document.getElementById("load-all-btn");
+      const saveTableBtn = document.getElementById("save-table-btn");
+      const saveAllBtn = document.getElementById("save-all-btn");
+      const backBtn = document.getElementById("back-btn");
+      const appShell = document.getElementById("app-shell");
+      const loginOverlay = document.getElementById("login-overlay");
+      const loginUser = document.getElementById("login-user");
+      const loginPass = document.getElementById("login-pass");
+      const loginBtn = document.getElementById("login-btn");
+      const loginError = document.getElementById("login-error");
+
+      let currentTable = null;
+      let tables = [];
+      let isAuthed = false;
+
+      const AUTH_KEY = "schema_admin_authed";
+      const ADMIN_USER = "admin";
+      const ADMIN_PASS = "123456";
+
+      function setStatus(message, isError = false) {
+        statusEl.textContent = message;
+        statusEl.style.color = isError ? "#dc2626" : "#6b7280";
+      }
+
+      async function fetchJson(url, options = {}) {
+        const res = await fetch(url, options);
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || data.msg || "请求失败");
+        }
+        return data;
+      }
+
+      function renderTables() {
+        tableListEl.innerHTML = "";
+        tables.forEach((table) => {
+          const btn = document.createElement("button");
+          btn.textContent = table;
+          if (table === currentTable) {
+            btn.classList.add("active");
+          }
+          btn.addEventListener("click", () => loadTable(table));
+          tableListEl.appendChild(btn);
+        });
+      }
+
+      async function loadTables() {
+        setStatus("正在加载表...");
+        try {
+          const data = await fetchJson(`${API_BASE}/tables`);
+          tables = data.tables || [];
+          if (tables.length && !currentTable) {
+            currentTable = tables[0];
+          }
+          renderTables();
+          if (currentTable) {
+            await loadTable(currentTable, false);
+          }
+          setStatus("表已加载");
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      }
+
+      async function loadTable(tableName, updateStatus = true) {
+        currentTable = tableName;
+        currentTableEl.textContent = `表：${tableName}`;
+        if (updateStatus) {
+          setStatus(`正在加载 ${tableName}...`);
+        }
+        renderTables();
+        try {
+          const data = await fetchJson(`${API_BASE}/table/${encodeURIComponent(tableName)}`);
+          editorEl.value = JSON.stringify(data.columns || {}, null, 2);
+          if (updateStatus) {
+            setStatus(`已加载 ${tableName}`);
+          }
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      }
+
+      async function loadAll() {
+        setStatus("正在加载全部 Schema...");
+        try {
+          const data = await fetchJson(`${API_BASE}/all`);
+          currentTable = null;
+          currentTableEl.textContent = "全部表";
+          renderTables();
+          editorEl.value = JSON.stringify(data.schema || {}, null, 2);
+          setStatus("已加载全部 Schema");
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      }
+
+      function getTokenHeader() {
+        const token = tokenInput.value.trim();
+        return token ? { "X-Admin-Token": token } : {};
+      }
+
+      function setAuthed(next) {
+        isAuthed = next;
+        if (isAuthed) {
+          loginOverlay.style.display = "none";
+          appShell.classList.remove("locked");
+          tokenInput.value = ADMIN_PASS;
+          tokenInput.disabled = true;
+          sessionStorage.setItem(AUTH_KEY, "1");
+        } else {
+          loginOverlay.style.display = "flex";
+          appShell.classList.add("locked");
+          tokenInput.value = "";
+          tokenInput.disabled = false;
+          sessionStorage.removeItem(AUTH_KEY);
+        }
+      }
+
+      function tryLogin() {
+        const user = loginUser.value.trim();
+        const pass = loginPass.value.trim();
+        if (user === ADMIN_USER && pass === ADMIN_PASS) {
+          loginError.textContent = "";
+          setAuthed(true);
+          loadTables();
+        } else {
+          loginError.textContent = "账号或密码错误，请重试。";
+        }
+      }
+
+      async function saveTable() {
+        if (!currentTable) {
+          setStatus("请先选择一张表", true);
+          return;
+        }
+        try {
+          const body = JSON.parse(editorEl.value || "{}");
+          const data = await fetchJson(`${API_BASE}/table/${encodeURIComponent(currentTable)}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...getTokenHeader(),
+            },
+            body: JSON.stringify(body),
+          });
+          setStatus(data.msg || `已保存 ${currentTable}`);
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      }
+
+      async function saveAll() {
+        try {
+          const body = JSON.parse(editorEl.value || "{}");
+          const data = await fetchJson(`${API_BASE}/save_all`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...getTokenHeader(),
+            },
+            body: JSON.stringify(body),
+          });
+          setStatus(data.msg || "已保存全部 Schema");
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      }
+
+      refreshBtn.addEventListener("click", loadTables);
+      loadAllBtn.addEventListener("click", loadAll);
+      saveTableBtn.addEventListener("click", saveTable);
+      saveAllBtn.addEventListener("click", saveAll);
+      if (backBtn) {
+        backBtn.addEventListener("click", () => {
+          const target = document.referrer || "/";
+          window.location.href = target;
+        });
+      }
+      loginBtn.addEventListener("click", tryLogin);
+      loginPass.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          tryLogin();
+        }
+      });
+
+      setAuthed(sessionStorage.getItem(AUTH_KEY) === "1");
+      if (isAuthed) {
+        loadTables();
+      }
+    </script>
+  </body>
+</html>
